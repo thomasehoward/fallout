@@ -36,7 +36,7 @@ esac
 wL=`awk 'NF!=0 {++c} END {print c}' $WORDFILE`
 
 # declares empty array PASSWDLIST
-declare -a PASSWDLIST=()
+#declare -a PASSWDLIST=()
 
 while [ "$COUNT" -le $MAXCOUNT ]
 do
@@ -45,7 +45,7 @@ WORDLIST=$(sed -n "$rnum p" $WORDFILE)
   for WORD in $WORDLIST
   do
     if [ ${#WORD} = $WORDLEN ]; then
-      PASSWDLIST=("${PASSWDLIST[@]}" "${WORD} | tr '[:lower:]' '[:upper:]'")
+      echo $WORD | tr '[:lower:]' '[:upper:]'
       let "COUNT += 1"
     else
       :
