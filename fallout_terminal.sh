@@ -1,7 +1,58 @@
 #!/bin/bash
 
+# variables config section
 ATTEMPTS=0
 #PASSWORD=
+DIFFICULTY=$1
+MAXCOUNT=12
+COUNT=1
+
+function passwordGen {
+
+WORDFILE="/usr/share/dict/words"
+
+case $DIFFICULTY in
+  veryeasy)
+    WORDLEN=6
+    ;;
+  easy)
+    WORDLEN=7
+    ;;
+  moderate)
+    WORDLEN=8
+    ;;
+  hard)
+    WORDLEN=9
+    ;;
+  veryhard)
+    WORDLEN=10
+    ;;
+  *)
+    echo "Please specify a difficulty: veryeasy | easy | moderate | hard | veryhard"
+    exit 1
+esac
+
+# number of lines in WORDFILE
+wL=`awk 'NF!=0 {++c} END {print c}' $WORDFILE`
+
+# declares empty array PASSWDLIST
+declare -a PASSWDLIST=()
+
+while [ "$COUNT" -le $MAXCOUNT ]
+do
+rnum=$(jot -r 1 1 $wL)
+WORDLIST=$(sed -n "$rnum p" $WORDFILE)
+  for WORD in $WORDLIST
+  do
+    if [ ${#WORD} = $WORDLEN ]; then
+      PASSWDLIST=("${PASSWDLIST[@]}" "${WORD} | tr '[:lower:]' '[:upper:]'")
+      let "COUNT += 1"
+    else
+      :
+    fi
+  done
+done
+}
 
 function terminalOutput {
 for i in {1..12}
@@ -57,7 +108,8 @@ sleep 2s
 echo ""
 echo "4 ATTEMPT(S) LEFT: * * * *"
 echo ""
+#passwordGen
 terminalOutput
 echo ""
-read -p " > " passwd
+read -p " > " derp
 

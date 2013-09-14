@@ -1,7 +1,30 @@
 #!/bin/bash
 
 WORDFILE="/usr/share/dict/words"
-WORDLEN=$1
+
+DIFFICULTY=$1
+
+case $DIFFICULTY in
+  veryeasy)
+    WORDLEN=6
+    ;;
+  easy)
+    WORDLEN=7
+    ;;
+  moderate)
+    WORDLEN=8
+    ;;
+  hard)
+    WORDLEN=9
+    ;;
+  veryhard)
+    WORDLEN=10
+    ;;
+  *)
+    echo "Please specify a difficulty: veryeasy | easy | moderate | hard | veryhard"
+    exit 1
+esac
+
 #NUMWORDS=$2
 MAXCOUNT=$2
 COUNT=1
