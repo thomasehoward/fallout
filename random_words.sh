@@ -2,25 +2,32 @@
 
 WORDFILE="/usr/share/dict/words"
 WORDLEN=$1
-NUMWORDS=$2
+#NUMWORDS=$2
+MAXCOUNT=$2
+COUNT=1
 
-#Number of lines in $WORDFILE
+# number of lines in $WORDFILE
+
 tL=`awk 'NF!=0 {++c} END {print c}' $WORDFILE`
 
-for i in `seq $NUMWORDS`
-do
+#for i in `seq $NUMWORDS`
 
-rnum=$((RANDOM%$tL+1))
+while [ "$COUNT" -le $MAXCOUNT ]
+
+do
+rnum=$(jot -r 1 1 $tL)
 WORDLIST=$(sed -n "$rnum p" $WORDFILE)
 
 # create specific wordlist files by difficulty
 
-for WORD in $WORDLIST
+  for WORD in $WORDLIST
   do
-  if [ ${#WORD} = $WORDLEN ]; then
-    echo $WORD
-  fi
+    if [ ${#WORD} = $WORDLEN ]; then
+      echo $WORD | tr '[:lower:]' '[:upper:]'
+      let "COUNT += 1"
+    else
+      :
+    fi
   done
+
 done
-
-
