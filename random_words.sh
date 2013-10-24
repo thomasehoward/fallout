@@ -26,8 +26,9 @@ case $DIFFICULTY in
 esac
 
 #NUMWORDS=$2
-MAXCOUNT=$2
+MAXCOUNT=5
 COUNT=1
+declare -a WORDARRAY
 
 # number of lines in $WORDFILE
 
@@ -46,7 +47,9 @@ WORDLIST=$(sed -n "$rnum p" $WORDFILE)
   for WORD in $WORDLIST
   do
     if [ ${#WORD} = $WORDLEN ]; then
-      echo $WORD | tr '[:lower:]' '[:upper:]'
+      WORD="$(echo ${WORD} | tr '[:lower:]' '[:upper:]')"
+      WORDARRAY=("${WORDARRAY[@]}" "${WORD}") 
+#      echo $WORD | tr '[:lower:]' '[:upper:]'
       let "COUNT += 1"
     else
       :
@@ -54,3 +57,8 @@ WORDLIST=$(sed -n "$rnum p" $WORDFILE)
   done
 
 done
+
+echo "${WORDARRAY[0]} is the first word, the second is ${WORDARRAY[1]}"
+echo "The third word is ${WORDARRAY[2]} and the fourth is ${WORDARRAY[3]}"
+echo "The fifth word in the whole array is ${WORDARRAY[4]}"
+
