@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # variables config section
-ATTEMPTS=0
+ATTEMPTS=4
 #PASSWORD=
 DIFFICULTY=$1
 MAXCOUNT=12
@@ -56,6 +56,27 @@ WORDLIST=$(sed -n "$rnum p" $WORDFILE | tr '[:lower:]' '[:upper:]')
 done
 }
 
+#function verifyPass {
+#if [ "$ATTEMPTS" > 0 ]; then
+#do
+#  if [ $DERP = $PASSWORD ]; then
+#    echo 'Correct! The password is ${DERP}'
+#    # run selected story interface options
+#  elsif [ $DERP != $PASSWORD ]; then
+#    echo ""
+#    echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
+#    echo ""
+#    read -p " > " DERP
+#    let "ATTEMPTS -= 1"
+#  fi
+#done
+#else      
+#do
+#  clear
+#  echo "TERMINAL LOCK OUT IN PROGRESS. CONTACT ADMINISTRATOR FOR MORE DETAILS."
+#done
+#}
+
 #function terminalOutput {
 #for i in {1..17}
 #do
@@ -108,10 +129,13 @@ sleep 1s
 echo "ENTER PASSWORD NOW" 
 sleep 1s
 echo ""
-echo "4 ATTEMPT(S) LEFT: * * * *" 
+echo "$ATTEMPTS ATTEMPT(S) LEFT: * * * *" 
 echo ""
 passwordGen
 #terminalOutput
 echo ""
-read -p " > " derp
+read -p " > " DERP
+
+#verifyPass
+
 
