@@ -2,10 +2,26 @@
 
 # variables config section
 ATTEMPTS=4
-#PASSWORD=
 DIFFICULTY=$1
 MAXCOUNT=12
 COUNT=1
+ANSWER=$2
+
+function coinFlip {
+
+HEAD=0
+TAIL=0
+
+FLIP=$(($(($RANDOM%10))%2))
+
+if [ $FLIP -eq 1 ]; then
+    HEADS="False"
+  else
+    HEADS="True"
+  fi
+
+}
+
 
 function passwordGen {
 
@@ -35,9 +51,6 @@ esac
 # number of lines in WORDFILE
 wL=`awk 'NF!=0 {++c} END {print c}' $WORDFILE`
 
-# declares empty array PASSWDLIST
-#declare -a PASSWDLIST=()
-
 while [ "$COUNT" -le $MAXCOUNT ]
 do
 rnum=$(jot -r 1 1 $wL)
@@ -45,9 +58,17 @@ WORDLIST=$(sed -n "$rnum p" $WORDFILE | tr '[:lower:]' '[:upper:]')
   for WORD in $WORDLIST
   do
     if [ ${#WORD} = $WORDLEN ]; then
-#      echo "The Word is ${WORD}"
-#      echo $WORD | tr '[:lower:]' '[:upper:]'
-      echo " 0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 3)${WORD}$(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 3) 0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 12)"
+      coinFlip
+      if [ "$HEADS" = "False" ]; then
+        echo -e " 0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 3)${WORD}$(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 3)\t0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 12)"
+      else
+        echo -e " 0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 12)\t0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 3)${WORD}$(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 3)"
+      fi
+
+      if [ $COUNT = $ANSWER ]; then
+        PASSWD=$WORD
+      fi
+      
       let "COUNT += 1"
     else
       :
@@ -56,26 +77,26 @@ WORDLIST=$(sed -n "$rnum p" $WORDFILE | tr '[:lower:]' '[:upper:]')
 done
 }
 
-#function verifyPass {
-#if [ "$ATTEMPTS" > 0 ]; then
-#do
-#  if [ $DERP = $PASSWORD ]; then
-#    echo 'Correct! The password is ${DERP}'
-#    # run selected story interface options
-#  elsif [ $DERP != $PASSWORD ]; then
-#    echo ""
-#    echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
-#    echo ""
-#    read -p " > " DERP
-#    let "ATTEMPTS -= 1"
-#  fi
-#done
-#else      
-#do
-#  clear
-#  echo "TERMINAL LOCK OUT IN PROGRESS. CONTACT ADMINISTRATOR FOR MORE DETAILS."
-#done
-#}
+function verifyPass {
+until [ "$ATTEMPTS" -lt 2 ]
+do
+  if [ $DERP = $PASSWD ]; then
+    echo "Correct! The password is ${DERP}"
+    break
+    # run selected story interface options
+  elif [ $DERP != $PASSWD ]; then
+    let "ATTEMPTS -= 1"
+    echo ""
+    echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
+    echo ""
+    read -p " > " DERP
+  fi
+done
+
+if [ "$ATTEMPTS" -eq 1 ]; then
+  echo "TERMINAL LOCK OUT IN PROGRESS. CONTACT ADMINISTRATOR FOR MORE DETAILS."
+fi
+}
 
 #function terminalOutput {
 #for i in {1..17}
@@ -132,10 +153,9 @@ echo ""
 echo "$ATTEMPTS ATTEMPT(S) LEFT: * * * *" 
 echo ""
 passwordGen
-#terminalOutput
 echo ""
 read -p " > " DERP
 
-#verifyPass
+verifyPass
 
 
