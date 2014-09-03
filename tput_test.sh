@@ -8,7 +8,7 @@ tput cup 3 15
  
 # Set a foreground colour using ANSI escape
 tput setaf 3
-echo "XYX Corp LTD."
+echo "ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL"
 tput sgr0
  
 tput cup 5 17

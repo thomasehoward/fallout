@@ -6,6 +6,7 @@ DIFFICULTY=$1
 MAXCOUNT=12
 COUNT=1
 ANSWER=$2
+INVOKE=$3
 
 function coinFlip {
 
@@ -78,32 +79,40 @@ done
 }
 
 function verifyPass {
-until [ "$ATTEMPTS" -lt 2 ]
+until [ $ATTEMPTS -eq 0 ]
 do
-  if [ $DERP = $PASSWD ]; then
-    echo "Correct! The password is ${DERP}"
-    break
-    # run selected story interface options
-  elif [ $DERP != $PASSWD ]; then
-    let "ATTEMPTS -= 1"
-    echo ""
-    echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
-    echo ""
-    read -p " > " DERP
-  fi
-done
-
-if [ "$ATTEMPTS" -eq 1 ]; then
-  echo "TERMINAL LOCK OUT IN PROGRESS. CONTACT ADMINISTRATOR FOR MORE DETAILS."
+if [ $DERP = $PASSWD ]; then
+  echo ""
+  echo "Correct!"
+  echo ""
+  break
+elif [ "$ATTEMPTS" -eq 4 ]; then
+  let "ATTEMPTS -= 1"
+  echo ""
+  echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
+  echo ""
+  read -p " > " DERP
+elif [ "$ATTEMPTS" -eq 3 ]; then
+  let "ATTEMPTS -= 1"
+  echo ""
+  echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
+  echo ""
+  read -p " > " DERP
+elif [ $ATTEMPTS -eq 2 ]; then
+  let "ATTEMPTS -= 1"
+  echo ""
+  echo "INCORRECT. $ATTEMPTS ATTEMPT(S) LEFT."  
+  echo "" 
+  echo -e "\033[5m!!! WARNING: TERMINAL LOCKOUT IMMINENT !!!\033[0m"
+  echo ""
+  read -p " > " DERP
+elif [ "$ATTEMPTS" -eq 1 ]; then
+  clear
+  echo -e "\nTERMINAL LOCK OUT IN PROGRESS. CONTACT ADMINISTRATOR FOR MORE DETAILS.\n"
+  exit 0
 fi
+done
 }
-
-#function terminalOutput {
-#for i in {1..17}
-#do
-#echo " 0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 12) 0xF$(LC_CTYPE=C tr -dc A-F0-9 < /dev/urandom | head -c 3) $(LC_CTYPE=C tr -dc \!#\$%^*\(\)_-:\;\"\',.\<\>?/{}[] < /dev/urandom | head -c 12) "
-#done
-#}
 
 clear
 #for i in 1 2 3 4 5 6; do setterm -background black -foreground green -store > /dev/tty$i; done
@@ -155,7 +164,6 @@ echo ""
 passwordGen
 echo ""
 read -p " > " DERP
-
 verifyPass
-
-
+sleep 2s
+/bin/bash ./$INVOKE
